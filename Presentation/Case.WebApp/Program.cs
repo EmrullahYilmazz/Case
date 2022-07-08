@@ -2,9 +2,9 @@ using Case.Persistence.Context;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
+
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
-
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 string connectionString = configuration.GetConnectionString("default");
@@ -26,6 +26,11 @@ builder.Services.AddAuthorization(options =>
           policy.RequireRole("Customer"));
 });
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate();
+}
 
 
 // Configure the HTTP request pipeline.
